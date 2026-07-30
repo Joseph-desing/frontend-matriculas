@@ -28,7 +28,7 @@ function UsuariosPage() {
 
       const datos = await obtenerUsuarios();
 
-      setUsuarios(datos.usuarios || []);
+      setUsuarios(datos || []);
     } catch (error) {
       setError(error.message);
     } finally {

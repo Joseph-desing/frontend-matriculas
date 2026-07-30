@@ -1,61 +1,71 @@
-const API_URL = 'http://127.0.0.1:5000/api/usuarios';
+const API_URL = "http://127.0.0.1:5000/api/usuarios";
 
+// Obtener todos los usuarios
 export async function obtenerUsuarios() {
-  const respuesta = await fetch(API_URL);
+  const respuesta = await fetch(
+    "http://127.0.0.1:5000/api/usuarios"
+  );
+
+  const resultado = await respuesta.json();
 
   if (!respuesta.ok) {
-    throw new Error('No se pudieron obtener los usuarios');
+    throw new Error(
+      resultado.message || "Error al obtener usuarios."
+    );
   }
 
-  return respuesta.json();
+  return resultado.data || resultado.usuarios || [];
 }
 
+// Crear usuario
 export async function crearUsuario(usuario) {
   const respuesta = await fetch(API_URL, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(usuario),
   });
 
-  const datos = await respuesta.json();
+  const resultado = await respuesta.json();
 
   if (!respuesta.ok) {
-    throw new Error(datos.mensaje || 'No se pudo crear el usuario');
+    throw new Error(resultado.message || "Error al crear usuario.");
   }
 
-  return datos;
+  return resultado;
 }
 
+// Actualizar usuario
 export async function actualizarUsuario(id, usuario) {
   const respuesta = await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(usuario),
   });
 
-  const datos = await respuesta.json();
+  const resultado = await respuesta.json();
 
   if (!respuesta.ok) {
-    throw new Error(datos.mensaje || 'No se pudo actualizar el usuario');
+    throw new Error(resultado.message || "Error al actualizar usuario.");
   }
 
-  return datos;
+  return resultado;
 }
 
+// Eliminar usuario
 export async function eliminarUsuario(id) {
   const respuesta = await fetch(`${API_URL}/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 
-  const datos = await respuesta.json();
+  const resultado = await respuesta.json();
 
   if (!respuesta.ok) {
-    throw new Error(datos.mensaje || 'No se pudo eliminar el usuario');
+    throw new Error(resultado.message || "Error al eliminar usuario.");
   }
 
-  return datos;
+  return resultado;
 }
