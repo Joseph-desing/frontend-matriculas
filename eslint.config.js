@@ -17,5 +17,9 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Los formularios CRUD sincronizan sus valores cuando cambia el registro seleccionado.
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ])

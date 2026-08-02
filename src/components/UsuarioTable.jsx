@@ -1,41 +1,9 @@
-function UsuarioTable({ usuarios, onEditar, onEliminar }) {
-  if (usuarios.length === 0) {
-    return <p>No existen usuarios registrados.</p>;
-  }
-
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Correo</th>
-          <th>Fecha de creación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {usuarios.map((usuario) => (
-          <tr key={usuario.id}>
-            <td>{usuario.id}</td>
-            <td>{usuario.nombre}</td>
-            <td>{usuario.correo}</td>
-            <td>{usuario.created_at}</td>
-            <td className="acciones">
-              <button onClick={() => onEditar(usuario)}>
-                Editar
-              </button>
-
-              <button onClick={() => onEliminar(usuario.id)}>
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
+import DataTable from './DataTable.jsx';
+const columns = [
+  { key: 'id', label: 'ID', render: (row) => <span className="id-badge">#{row.id}</span> },
+  { key: 'nombre', label: 'Nombre', render: (row) => <div className="person-cell"><span>{row.nombre?.charAt(0)}</span><strong>{row.nombre}</strong></div> },
+  { key: 'correo', label: 'Correo' },
+  { key: 'created_at', label: 'Fecha de creación', render: (row) => row.created_at || '—' },
+];
+function UsuarioTable(props) { return <DataTable title="Directorio de usuarios" searchPlaceholder="Buscar por nombre o correo..." rows={props.usuarios} columns={columns} onEditar={props.onEditar} onEliminar={props.onEliminar} />; }
 export default UsuarioTable;

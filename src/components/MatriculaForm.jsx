@@ -1,154 +1,25 @@
-import { useEffect, useState } from "react";
-
-const formularioInicial = {
-  estudiante_id: "",
-  materia_id: "",
-  periodo: "",
-  fecha_matricula: "",
-  estado: "ACTIVA",
-};
-
-function MatriculaForm({
-  matriculaSeleccionada,
-  estudiantes,
-  materias,
-  onGuardar,
-  onCancelar,
-}) {
-  const [formulario, setFormulario] = useState(formularioInicial);
-
-  useEffect(() => {
-    if (matriculaSeleccionada) {
-      setFormulario({
-        estudiante_id:
-          matriculaSeleccionada.estudiante_id?.toString() || "",
-        materia_id:
-          matriculaSeleccionada.materia_id?.toString() || "",
-        periodo: matriculaSeleccionada.periodo || "",
-        fecha_matricula:
-          matriculaSeleccionada.fecha_matricula || "",
-        estado: matriculaSeleccionada.estado || "ACTIVA",
-      });
-    } else {
-      setFormulario(formularioInicial);
-    }
-  }, [matriculaSeleccionada]);
-
-  function manejarCambio(evento) {
-    const { name, value } = evento.target;
-
-    setFormulario((anterior) => ({
-      ...anterior,
-      [name]: value,
-    }));
-  }
-
-  function manejarEnvio(evento) {
-    evento.preventDefault();
-
-    onGuardar({
-      ...formulario,
-      estudiante_id: Number(formulario.estudiante_id),
-      materia_id: Number(formulario.materia_id),
-    });
-
-    if (!matriculaSeleccionada) {
-      setFormulario(formularioInicial);
-    }
-  }
-
-  function manejarCancelacion() {
-    setFormulario(formularioInicial);
-    onCancelar();
-  }
-
-  return (
-    <form onSubmit={manejarEnvio}>
-      <h3>
-        {matriculaSeleccionada
-          ? "Editar matrícula"
-          : "Crear matrícula"}
-      </h3>
-
-      <label htmlFor="estudiante_id">Estudiante</label>
-      <select
-        id="estudiante_id"
-        name="estudiante_id"
-        value={formulario.estudiante_id}
-        onChange={manejarCambio}
-        required
-      >
-        <option value="">Seleccione un estudiante</option>
-
-        {estudiantes.map((estudiante) => (
-          <option key={estudiante.id} value={estudiante.id}>
-            {estudiante.cedula} - {estudiante.nombres}{" "}
-            {estudiante.apellidos}
-          </option>
-        ))}
-      </select>
-
-      <label htmlFor="materia_id">Materia</label>
-      <select
-        id="materia_id"
-        name="materia_id"
-        value={formulario.materia_id}
-        onChange={manejarCambio}
-        required
-      >
-        <option value="">Seleccione una materia</option>
-
-        {materias.map((materia) => (
-          <option key={materia.id} value={materia.id}>
-            {materia.codigo} - {materia.nombre}
-          </option>
-        ))}
-      </select>
-
-      <label htmlFor="periodo">Periodo</label>
-      <input
-        id="periodo"
-        type="text"
-        name="periodo"
-        placeholder="Ejemplo: 2026-B"
-        value={formulario.periodo}
-        onChange={manejarCambio}
-        required
-      />
-
-      <label htmlFor="fecha_matricula">Fecha de matrícula</label>
-      <input
-        id="fecha_matricula"
-        type="date"
-        name="fecha_matricula"
-        value={formulario.fecha_matricula}
-        onChange={manejarCambio}
-        required
-      />
-
-      <label htmlFor="estado">Estado</label>
-      <select
-        id="estado"
-        name="estado"
-        value={formulario.estado}
-        onChange={manejarCambio}
-        required
-      >
-        <option value="ACTIVA">ACTIVA</option>
-        <option value="RETIRADA">RETIRADA</option>
-      </select>
-
-      <button type="submit">
-        {matriculaSeleccionada ? "Actualizar" : "Guardar"}
-      </button>
-
-      {matriculaSeleccionada && (
-        <button type="button" onClick={manejarCancelacion}>
-          Cancelar
-        </button>
-      )}
-    </form>
-  );
+import { useEffect, useState } from 'react';
+import { FiBookOpen, FiCalendar, FiLayers, FiUser } from 'react-icons/fi';
+import { FormActions, FormField } from './UsuarioForm.jsx';
+const initial = { estudiante_id: '', materia_id: '', periodo: '', fecha_matricula: '', estado: 'ACTIVA' };
+function MatriculaForm({ matriculaSeleccionada, estudiantes, materias, onGuardar, onCancelar }) {
+  const [form, setForm] = useState(initial);
+  useEffect(() => setForm(matriculaSeleccionada ? {
+    estudiante_id: matriculaSeleccionada.estudiante_id?.toString() || '', materia_id: matriculaSeleccionada.materia_id?.toString() || '',
+    periodo: matriculaSeleccionada.periodo || '', fecha_matricula: matriculaSeleccionada.fecha_matricula || '', estado: matriculaSeleccionada.estado || 'ACTIVA'
+  } : initial), [matriculaSeleccionada]);
+  const change = ({ target }) => setForm((old) => ({ ...old, [target.name]: target.value }));
+  const submit = (e) => { e.preventDefault(); onGuardar({ ...form, estudiante_id: Number(form.estudiante_id), materia_id: Number(form.materia_id) }); if (!matriculaSeleccionada) setForm(initial); };
+  const cancel = () => { setForm(initial); onCancelar(); };
+  return <form onSubmit={submit} className="form-card">
+    <div className="form-card-header"><div className="form-title-icon orange"><FiLayers /></div><div><h2>{matriculaSeleccionada ? 'Editar matrícula' : 'Nueva matrícula'}</h2><p>Vincula un estudiante con una materia y periodo.</p></div></div>
+    <div className="row g-4">
+      <FormField icon={<FiUser />} label="Estudiante" required><select className="form-select" name="estudiante_id" value={form.estudiante_id} onChange={change} required><option value="">Selecciona un estudiante</option>{estudiantes.map((item) => <option key={item.id} value={item.id}>{item.cedula} - {item.nombres} {item.apellidos}</option>)}</select></FormField>
+      <FormField icon={<FiBookOpen />} label="Materia" required><select className="form-select" name="materia_id" value={form.materia_id} onChange={change} required><option value="">Selecciona una materia</option>{materias.map((item) => <option key={item.id} value={item.id}>{item.codigo} - {item.nombre}</option>)}</select></FormField>
+      <FormField icon={<FiCalendar />} label="Periodo" required><input className="form-control" name="periodo" value={form.periodo} onChange={change} placeholder="Ej. 2026-B" required /></FormField>
+      <FormField icon={<FiCalendar />} label="Fecha de matrícula" required><input className="form-control" name="fecha_matricula" type="date" value={form.fecha_matricula} onChange={change} required /></FormField>
+      <FormField icon={<FiLayers />} label="Estado" required><select className="form-select" name="estado" value={form.estado} onChange={change}><option value="ACTIVA">ACTIVA</option><option value="RETIRADA">RETIRADA</option></select></FormField>
+    </div><FormActions editing={!!matriculaSeleccionada} onCancelar={cancel} />
+  </form>;
 }
-
 export default MatriculaForm;
